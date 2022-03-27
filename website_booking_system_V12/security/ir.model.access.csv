@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_booking_time_slot,access_booking_time_slot,model_booking_time_slot,,1,1,1,1
+access_booking_plan,access_booking_plan,model_booking_plan,,1,1,1,1
+access_booking_config_time_slot,access_booking_config_time_slot,model_booking_config_time_slot,,1,1,1,1
+access_booking_slot,access_booking_slot,model_booking_slot,,1,1,1,1

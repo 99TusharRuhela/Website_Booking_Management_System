@@ -1,0 +1,48 @@
+<odoo>
+  <data>
+
+    <!-- list view -->
+    <record model="ir.ui.view" id="booking_time_slot_list">
+      <field name="name">Booking Time Slot Tree View</field>
+      <field name="model">booking.time.slot</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="start_time"/>
+          <field name="end_time"/>
+        </tree>
+      </field>
+    </record>
+
+    <!-- form view -->
+    <record model="ir.ui.view" id="booking_time_slot_form">
+      <field name="name">Booking Time Slot Form View</field>
+      <field name="model">booking.time.slot</field>
+      <field name="arch" type="xml">
+        <form duplicate="false">
+          <sheet>
+            <group>
+              <group>
+                <field name="start_time" widget="float_time"/>
+                <field name="end_time" widget="float_time"/>
+              </group>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+     <!-- action--> 
+    <record model="ir.actions.act_window" id="booking_time_slot_action_window">
+      <field name="name">Booking Time Slot</field>
+      <field name="res_model">booking.time.slot</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Menu -->
+    <menuitem name="Time Slot" 
+              id="booking_time_slot_submenu_list"
+              parent="booking_configuration_menu_root_list"
+              action="booking_time_slot_action_window"
+              sequence="2"/>
+  </data>
+</odoo>

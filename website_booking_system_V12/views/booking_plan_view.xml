@@ -1,0 +1,55 @@
+<odoo>
+  <data>
+
+    <!-- list view -->
+    <record model="ir.ui.view" id="booking_plan_list">
+      <field name="name">Booking Plan Tree View</field>
+      <field name="model">booking.plan</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+        </tree>
+      </field>
+    </record>
+
+    <!-- form view -->
+    <record model="ir.ui.view" id="booking_plan_form">
+      <field name="name">Booking Plan Form View</field>
+      <field name="model">booking.plan</field>
+      <field name="arch" type="xml">
+        <form duplicate="false">
+          <sheet>
+            <group>
+              <group>
+                <field name="name"/>
+                <field name="sequence"/>
+              </group>
+            </group>
+            <group>
+              <field name="description"/>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+    <!-- action-->
+    <record model="ir.actions.act_window" id="booking_plan_action_window">
+      <field name="name">Booking Plans</field>
+      <field name="res_model">booking.plan</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Menu -->
+    <menuitem name="Configuration" 
+              id="booking_configuration_menu_root_list"
+              parent="booking_list"
+              sequence="3"/>
+
+    <menuitem name="Plans" 
+              id="booking_plans_submenu_list"
+              parent="booking_configuration_menu_root_list"
+              action="booking_plan_action_window"
+              sequence="1"/>
+  </data>
+</odoo>

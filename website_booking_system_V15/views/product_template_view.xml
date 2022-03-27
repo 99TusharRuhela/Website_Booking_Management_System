@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <data>
+    <record id="inherit_product_template_view" model="ir.ui.view">
+      <field name="name">product.template.inherit</field>
+      <field name="model">product.template</field>
+      <field name="inherit_id" ref="product.product_template_only_form_view"/>
+      <field name="arch" type="xml">
+        <xpath expr="//div[@name='options']/span[@class='d-inline-block']" position="before">
+          <span>
+            <field name="is_available_booking"/>
+            <label for="is_available_booking"/>
+          </span>
+        </xpath>
+
+        <xpath expr="//field[@name='detailed_type']" position="attributes">
+          <attribute name="attrs">
+            {'readonly': [('is_available_booking', '!=', False)]}
+          </attribute>
+        </xpath>
+        
+        <xpath expr="//page[@name='general_information']" position="after">
+          <page string="Booking &amp; Reservation" name="booking_reservation" attrs="{'invisible': [('is_available_booking', '=', False)]}">
+            <group>
+              <group>
+                <field name="start_date"/>
+              </group>
+              <group>
+                <field name="end_date"/>
+              </group>
+            </group>
+            <h3 style="color:#71639e;">Configure Day Slots</h3>
+            <field name="config_time_slots_ids">
+              <tree>
+                <field name="book_day"/>
+                <field name="book_status"/>
+              </tree>
+              <form>
+                <sheet>
+                  <group>
+                    <group>
+                      <field name="book_day"/>
+                      <field name="book_status"/>
+                    </group>
+                  </group>
+                  <h3 style="color:#71639e;">Booking Slots</h3>
+                  <field name="booking_slot_ids">
+                    <tree editable="bottom">
+                      <field name="time_slot_id" options="{'no_open': True,'no_create': True, 'no_create_edit': True}"/>
+                      <field name="plan_id" options="{'no_open': True,'no_create': True, 'no_create_edit': True}"/>
+                      <field name="quantity"/>
+                      <field name="price"/>
+                      <field name="template_product_id" invisible="1"/>
+                      <field name="booking_configure_id" invisible="1"/>
+                    </tree>
+                    <form>
+                      <sheet>
+                        <group>
+                          <group>
+                            <field name="time_slot_id"/>  
+                            <field name="plan_id"/>
+                            <field name="quantity"/>
+                            <field name="price"/>
+                            <field name="template_product_id" invisible="1"/>
+                            <field name="booking_configure_id" invisible="1"/>
+                          </group>
+                        </group>
+                      </sheet>
+                    </form>
+                  </field>
+                </sheet>
+              </form>
+            </field>
+            <group>
+              <group>
+                <field name="booking_qty"/>
+              </group>
+            </group>
+          </page>
+        </xpath>
+      </field>
+    </record> 
+
+    <record id="inherit_product_template_action" model="ir.actions.act_window">
+        <field name="name">Products</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">product.template</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="view_id" ref="product.product_template_kanban_view"/>
+        <field name="search_view_id" ref="product.product_template_search_view"/>
+        <field name="domain">[('is_available_booking','=',True)]</field>
+        <field name="context">{"search_default_filter_to_sell":1, 'default_is_available_booking': True}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create a new product
+            </p><p>
+                You must define a product for everything you sell or purchase,
+                whether it's a storable product, a consumable or a service.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu -->
+    <menuitem name="Products" 
+              id="booking_products_menu_root_list"
+              parent="booking_list"
+              sequence="3"/>
+
+    <menuitem name="Products" 
+              id="booking_products_submenu_list"
+              parent="booking_products_menu_root_list"
+              action="inherit_product_template_action"
+              sequence="1"/>
+  </data>
+</odoo>

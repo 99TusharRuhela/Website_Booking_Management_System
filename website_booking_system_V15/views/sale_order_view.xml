@@ -1,0 +1,629 @@
+<odoo>
+  <data>
+
+    <template id="pop_up_plan_modal">
+        <style>
+            .style-table { 
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .style-tr { 
+                display: flex;
+                flex-direction: column;
+                }
+            .style-tbody {
+                display: flex;
+                flex-direction: row;
+            }
+            .style-div {
+                border: 1px solid lightgray;
+            }
+            .style-tr .style-td
+            {
+                background-color: #DBE9FF;
+                border: 1px solid #7DAFFF;
+            }
+            .style-active-plan
+            {
+              background-color: #7DAFFF;
+            }
+        </style>
+        <t t-set="lines_plan" t-value="data_dict_plan"/>
+        <table class="table table-hover style-table">
+            <tbody class="style-tbody">
+                <t t-foreach="lines_plan" t-as="line_plan">
+                    <tr class="style-tr">
+                        <td class="style-td" onclick="ChangePlan(this)">
+                            <span><t t-esc="line_plan['plan']"/></span><br/>
+                            <span>$&amp;nbsp;<t t-esc="line_plan['price']"/></span>
+                            <input type="hidden" id="bookPlanID" name="bookPlanID" readonly="true" t-att-value="line_plan['id']"/>
+                        </td>
+                    </tr>
+                </t>
+            </tbody>
+        </table>
+  </template>
+
+    <template id="pop_up_time_modal">
+        <style>
+            .style-table { 
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .style-tr { 
+                display: flex;
+                flex-direction: column;
+                }
+            .style-tbody {
+                display: flex;
+                flex-direction: row;
+            }
+            .style-div {
+                border: 1px solid lightgray;
+            }
+            .style-tr .style-td
+            {
+                background-color: #DBE9FF;
+                border: 1px solid #7DAFFF;
+            }
+
+            .style-active-time
+            {
+              background-color: #7DAFFF;
+            }
+        </style>
+        <t t-set="lines_product" t-value="data_dict_product"/>
+        <table class="table table-hover style-table">
+            <tbody class="style-tbody">
+                <t t-foreach="lines_product" t-as="line_product">
+                    <tr class="style-tr">
+                        <td class="style-td" onclick="ChangeTime(this)">
+                            <span><t t-esc="line_product['time_slot']"/></span>
+                            <input type="hidden" id="bookID" name="bookID" readonly="true" t-att-value="line_product['id']"/>
+                            <input type="hidden" id="productID" name="productID" readonly="true" t-att-value="line_product['product_template_id']"/>
+                        </td>
+                    </tr>
+                </t>
+            </tbody>
+        </table>
+  </template>
+
+    <template id="pop_up_modal">    
+        <style>
+            .style-table { 
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .style-tr { 
+                display: flex;
+                flex-direction: column;
+                }
+            .style-tbody {
+                display: flex;
+                flex-direction: row;
+            }
+            .style-div {
+                border: 1px solid lightgray;
+            }
+            .style-tr .style-td {
+                background-color: #DBE9FF;
+                border: 1px solid #7DAFFF;
+            }
+            .style-active-day {
+                background-color: #7DAFFF;
+            }
+            <!-- .style-btn {
+                background-color: #008CBA;
+                border: none;
+                color: white;
+                padding: 15px 32px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 16px;
+                margin: 4px 2px;
+                cursor: pointer;
+            } -->
+            .style-btn{
+                background-color: dodgerblue;
+                padding: 10px 37px;
+                color: white;
+                border-radius: 1rem;
+                text-align: center;
+                text-decoration: none;
+                border: 1px solid #DBE9FF;
+                cursor: pointer;
+            }
+        </style>
+        <div class="text-right">
+            <button onclick="close_modal()" class="fa fa-close" data-dismiss="modal">
+            </button>
+        </div>
+        <div class="row">
+            <div class="col-10 text-center">
+                <h2 class="ml-5" style="color: dodgerblue;">Book Your Slot</h2>
+            </div>
+        </div>
+        <hr class="mt-2" style="width: -webkit-fill-available;background-color: lightgray;"/>
+        <div class="row">
+            <div class="col-6">
+                <h5>Select Slot:</h5>
+            </div>
+            <!-- <div class="col-6 text-right mb-2">    
+                <input type="date" id="dateinput"/>
+            </div> -->
+        </div>
+        <div class="row">
+            <t t-set="product_id" t-value="product_record"/>
+            <t t-set="lines_date" t-value="data_dict_date"/>
+            <div class="col-12 style-div">
+                <table class="table table-hover style-table">
+                    <tbody class="style-tbody">
+                        <t t-foreach="product_id.config_time_slots_ids" t-as="line">
+                            <t t-foreach="lines_date" t-as="line_date">
+                                <tr class="style-tr" onclick="select_date()">
+                                    <td t-if="line.book_day == line_date['btw_day'] and line.book_status == 'open'" class="style-td" onclick="Change(this)">
+                                        <span class="style-span">
+                                            <t t-esc="line_date['btw_day']"/><br/>
+                                            <t t-esc="line_date['btw_month']"/><br/>
+                                            <t t-esc="line_date['btw_date']"/>
+                                        </span>
+                                        <input type="hidden" id="configID" name="configID" readonly="true" t-att-value='line.id'/>
+                                        <input type="hidden" id="product_ID" name="product_ID" readonly="true" t-att-value='product_id.id'/>
+                                        <input type="hidden" id="date_id" name="date_id" readonly="true" t-att-value="line_date['full_date']"/>
+                                    </td>
+                                </tr>
+                            </t>
+                        </t>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-6" style="padding: 7px;">
+                <h5>Select Time:</h5>
+            </div>
+        </div>
+        <div class="col-12 style-div" id="modalTime"> 
+            <p class="modal-content-time mt-3">Select Day...</p>
+        </div>
+        <div class="row">
+            <div class="col-6" style="padding: 7px;">
+                <h5>Select Plan:</h5>
+            </div>
+            <!-- <div class="col-6 text-right">
+                <div class="ml-auto mt-2" style="border: 1px solid lightgray;width: fit-content;">
+                    <span>$ 100.0</span>
+                </div>
+            </div> -->
+        </div>
+        <div class="col-12 style-div" id="modalPlan">
+            <p class="modal-content-plan mt-3">Select Day...</p>
+        </div>
+        <div class="row">
+            <div class="col-5 mt-3" style="padding: 7px;">
+                <span><strong>Guest</strong> (Maximum capacity is </span><span class="qty-seat"><t t-esc="product_record.booking_qty"/> </span><span>) </span><br/>
+                <div class="css_quantity input-group d-inline-flex mr-2 my-1 align-middle" contenteditable="false">
+                    <div class="input-group-prepend">
+                        <a t-attf-href="#" class="btn btn-primary" aria-label="Remove one" title="Remove one" onclick="select_seat()">
+                            <i class="fa fa-minus"></i>
+                        </a>
+                    </div>
+                    <input type="text" class="form-control quantity qtyProduct" data-min="1" name="add_qty" t-att-value="1"/>
+                    <div class="input-group-append">
+                        <a t-attf-href="#" class="btn btn-primary float_left" aria-label="Add one" title="Add one" onclick="select_seat()">
+                            <i class="fa fa-plus"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+             <div class="col-7 mt-3 ml-auto mt-auto text-right" style="padding: 7px;">
+                Total:<input type="text" name="total_amt" id="myAmt" value="$ 100.0" disabled="True"/>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-5 mt-3" style="padding: 7px;">
+                <button class="style-btn load-btn" id="add_to_cart" onClick="window.location.reload();">Book Now</button>    
+            </div>
+        </div>
+    </template>
+
+    <!-- This template is the one at the "Review order" step (the first one) on the checkout workflow. -->
+    <template id="website_sale.cart_lines" name="Shopping Cart Lines">
+        <div t-if="not website_sale_order or not website_sale_order.website_order_line" class="js_cart_lines alert alert-info">
+          Your cart is empty!
+        </div>
+        <table class="mb16 table table-striped table-sm js_cart_lines" id="cart_products" t-if="website_sale_order and website_sale_order.website_order_line">
+            <thead>
+                <tr>
+                    <th class="td-img">Product</th>
+                    <th></th>
+                    <th class="text-center td-qty">
+                        <t t-set="show_qty" t-value="is_view_active('website_sale.product_quantity')"/>
+                        <t t-if="show_qty">
+                            Quantity
+                        </t>
+                    </th>
+                    <th class="text-center td-price">Price</th>
+                    <th class="text-center td-action"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <t t-foreach="website_sale_order.website_order_line" t-as="line">
+                    <tr t-att-class="'optional_product info' if line.linked_line_id else None">
+                        <td colspan="2" t-if="not line.product_id.product_tmpl_id" class='td-img'></td>
+                        <td align="center" t-if="line.product_id.product_tmpl_id" class='td-img'>
+                            <span t-if="line._is_not_sellable_line() and line.product_id.image_128">
+                                <img t-att-src="image_data_uri(line.product_id.image_128)" class="img o_image_64_max rounded" t-att-alt="line.name_short"/>
+                            </span>
+                            <span t-else=""
+                                t-field="line.product_id.image_128"
+                                t-options="{'widget': 'image', 'qweb_img_responsive': False, 'class': 'rounded o_image_64_max'}"
+                            />
+                        </td>
+                        <td t-if="line.product_id.product_tmpl_id" class='td-product_name'>
+                            <div>
+                                <t t-call="website_sale.cart_line_product_link">
+                                    <strong t-field="line.name_short" /><br/>
+                                </t>
+                                <span t-if="line.product_id.is_available_booking">
+                                    <t t-esc="line.booking_date"/> | <strong>Slot:</strong> <t t-esc="line.booking_time_slot"/>
+                                </span><br/>
+                                <a t-if="line.product_id.is_available_booking" role="button" href="#" class="btn btn-info mb32 d-none d-xl-inline-block">
+                                    <span><t t-esc="line.booking_plan"/> $<t t-esc="line.price_unit"/></span>
+                                </a>
+                            </div>
+                            <t t-call="website_sale.cart_line_description_following_lines">
+                                <t t-set="div_class" t-value="'d-none d-md-block'"/>
+                            </t>
+                        </td>
+                        <td class="text-center td-qty">
+                            <div class="css_quantity input-group mx-auto justify-content-center">
+                                <t t-if="not line._is_not_sellable_line()">
+                                    <t t-if="show_qty">
+                                        <div t-if="not line.product_id.is_available_booking" class="input-group-prepend">
+                                            <a t-attf-href="#" class="btn btn-link js_add_cart_json d-none d-md-inline-block" aria-label="Remove one" title="Remove one">
+                                                <i class="fa fa-minus"></i>
+                                            </a>
+                                        </div>
+                                        <input type="text" class="js_quantity form-control quantity" t-att-data-line-id="line.id" t-att-data-product-id="line.product_id.id" t-att-value="int(line.product_uom_qty) == line.product_uom_qty and int(line.product_uom_qty) or line.product_uom_qty" disabled="True"/>
+                                        <div t-if="not line.product_id.is_available_booking" class="input-group-append">
+                                            <a t-attf-href="#" class="btn btn-link float_left js_add_cart_json d-none d-md-inline-block" aria-label="Add one" title="Add one">
+                                                <i class="fa fa-plus"></i>
+                                            </a>
+                                        </div>
+                                    </t>
+                                    <t t-else="">
+                                        <input type="hidden" class="js_quantity form-control quantity" t-att-data-line-id="line.id" t-att-data-product-id="line.product_id.id" t-att-value="int(line.product_uom_qty) == line.product_uom_qty and int(line.product_uom_qty) or line.product_uom_qty" />
+                                    </t>
+                                </t>
+                                <t t-else="">
+                                    <span class="text-muted w-100" t-esc="int(line.product_uom_qty)"/>
+                                    <input type="hidden" class="js_quantity form-control quantity" t-att-data-line-id="line.id" t-att-data-product-id="line.product_id.id" t-att-value="line.product_uom_qty" />
+                                </t>
+                            </div>
+                        </td>
+                        <td class="text-center td-price" name="price">
+                            <t t-set="combination" t-value="line.product_id.product_template_attribute_value_ids + line.product_no_variant_attribute_value_ids"/>
+                            <t t-set="combination_info" t-value="line.product_id.product_tmpl_id._get_combination_info(combination, pricelist=website_sale_order.pricelist_id, add_qty=line.product_uom_qty)"/>
+
+                            <t t-set="list_price_converted" t-value="website.currency_id._convert(combination_info['list_price'], website_sale_order.currency_id, website_sale_order.company_id, date)"/>
+                            <t groups="account.group_show_line_subtotals_tax_excluded" t-if="(website_sale_order.pricelist_id.discount_policy == 'without_discount' and website_sale_order.currency_id.compare_amounts(list_price_converted, line.price_reduce_taxexcl) == 1) or website_sale_order.currency_id.compare_amounts(line.price_unit, line.price_reduce) == 1" name="order_line_discount">
+                                <del t-attf-class="#{'text-danger mr8'}" style="white-space: nowrap;" t-esc="list_price_converted" t-options="{'widget': 'monetary', 'display_currency': website_sale_order.currency_id}" />
+                            </t>
+                            <span t-field="line.price_subtotal" style="white-space: nowrap;" t-options="{'widget': 'monetary', 'display_currency': website_sale_order.currency_id}" groups="account.group_show_line_subtotals_tax_excluded" />
+                            <t groups="account.group_show_line_subtotals_tax_included" t-if="(website_sale_order.pricelist_id.discount_policy == 'without_discount' and website_sale_order.currency_id.compare_amounts(list_price_converted, line.price_reduce_taxinc) == 1) or website_sale_order.currency_id.compare_amounts(line.price_unit, line.price_reduce) == 1" name="order_line_discount">
+                                <del t-attf-class="#{'text-danger mr8'}" style="white-space: nowrap;" t-esc="list_price_converted" t-options="{'widget': 'monetary', 'display_currency': website_sale_order.currency_id}" />
+                            </t>
+                            <span t-field="line.price_reduce_taxinc" style="white-space: nowrap;" t-options="{'widget': 'monetary', 'display_currency': website_sale_order.currency_id}" groups="account.group_show_line_subtotals_tax_included" />
+                            <small t-if="not line._is_not_sellable_line() and line.product_id.base_unit_price" class="cart_product_base_unit_price d-block text-muted" groups="website_sale.group_show_uom_price">
+                                <t t-call='website_sale.base_unit_price'><t t-set='product' t-value='line.product_id' /></t>
+                            </small>
+                        </td>
+                        <td class="td-action">
+                            <a href='#' aria-label="Remove from cart" title="Remove from cart" class='js_delete_product no-decoration'> <small><i class='fa fa-trash-o'></i></small></a>
+                        </td>
+                    </tr>
+                </t>
+            </tbody>
+        </table>
+
+    </template>
+    
+    <template id="website_sale.product_custom_text" inherit_id="website_sale.product" active="True" customize_show="True" name="Terms and Conditions" priority="21">
+        <xpath expr="//div[@id='o_product_terms_and_share']" position="inside">
+            <p class="text-muted h6 mt-3">
+                <a t-if="not product.is_available_booking" href="/terms" class="text-muted">Terms and Conditions</a><br/>
+                <span t-if="not product.is_available_booking">30-day money-back guarantee</span><br/>
+                <span t-if="not product.is_available_booking">Shipping: 2-3 Business Days</span>
+            </p>
+        </xpath>
+    </template>
+
+    <template id="website_sale.product_quantity" inherit_id="website_sale.product" customize_show="True" name="Select Quantity">
+      <xpath expr="//div[@id='add_to_cart_wrap']" position="before">
+        <p t-if="product.is_available_booking">This is booking product.</p>
+        <div t-if="not product.is_available_booking" class="css_quantity input-group d-inline-flex mr-2 my-1 align-middle" contenteditable="false">
+            <div class="input-group-prepend">
+                <a t-attf-href="#" class="btn btn-primary js_add_cart_json" aria-label="Remove one" title="Remove one">
+                    <i class="fa fa-minus"></i>
+                </a>
+            </div>
+            <input type="text" class="form-control quantity" data-min="1" name="add_qty" t-att-value="add_qty or 1"/>
+            <div class="input-group-append">
+                <a t-attf-href="#" class="btn btn-primary float_left js_add_cart_json" aria-label="Add one" title="Add one">
+                    <i class="fa fa-plus"></i>
+                </a>
+            </div>
+        </div>
+      </xpath>
+    </template>
+
+    <template id="inherit_product" inherit_id="website_sale.product" name="Hide Quantity">
+      <xpath expr="//div[@id='add_to_cart_wrap']" position="replace">
+        <style>
+            .book-style{
+                background-color: dodgerblue;
+                padding: 10px;
+                color: white;
+                border-radius: 2rem;
+                position: relative;
+                top: 7px;
+            }
+            .book-style:hover{
+                text-decoration: none;
+            }
+            /* The Modal (background) */
+            .modal {
+              display: none; /* Hidden by default */
+              position: fixed; /* Stay in place */
+              z-index: 1; /* Sit on top */
+              padding-top: 100px; /* Location of the box */
+              left: 0;
+              top: 0;
+              width: 100%; /* Full width */
+              height: 100%; /* Full height */
+              overflow: auto; /* Enable scroll if needed */
+              background-color: rgb(0,0,0); /* Fallback color */
+              background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+            }
+
+            /* Modal Content */
+            .modal-content {
+              background-color: #fefefe;
+              margin: auto;
+              padding: 20px;
+              border: 1px solid #888;
+              width: 50%;
+            }
+
+            /* The Close Button */
+            .close {
+              color: #aaaaaa;
+              float: right;
+              font-size: 28px;
+              font-weight: bold;
+            }
+
+            .close:hover,
+            .close:focus {
+              color: #000;
+              text-decoration: none;
+              cursor: pointer;
+            }
+            @media (min-width: 576px){
+                .modal-content {
+                    max-height: fit-content !important;
+                }
+            }
+
+        </style>
+
+        <div id="myModal" class="modal">
+          <!-- Modal content -->
+          <div class="modal-content">
+            <span class="close">&amp;</span>
+            <p>Some text in the Modal..</p>
+          </div>
+        </div>
+
+        <!-- t-att-href="'/booking/prodcut/id/%s'%(product.id)" -->
+
+        <a t-if="product.is_available_booking" href="#" class="active book-style" onclick="click_book_now()">
+            <span class="book-now">Book Now</span>
+        </a>
+        <input type="hidden" id="productID" name="productID" readonly="true" t-att-value='product.id'/>
+
+        <div t-if="not product.is_available_booking" id="add_to_cart_wrap" class="d-inline">
+            <a role="button" id="add_to_cart" class="btn btn-primary btn-lg js_check_product a-submit my-1 mr-1 px-5 font-weight-bold flex-grow-1" href="#"><i class="fa fa-shopping-cart mr-2"/>ADD TO CART</a>
+            <div id="product_option_block" class="d-inline-block align-middle"/>
+        </div>
+      </xpath>
+    </template> 
+
+    <template id="inherit_products_item" name="Inherit Product Item" inherit_id="website_sale.products_item"> 
+        <xpath expr="//*[hasclass('oe_product_image')]/a[@itemprop='url']" position="before">
+            <style>
+            .branch-style{
+                background-color: dodgerblue;
+                padding: 8px;
+                color: white;
+                border-radius: 2rem;
+                position: relative;
+                top: 0px;
+                font-size:12px;
+            }
+            .branch-style:hover{
+                color: white;
+                text-decoration:none;
+            }
+            .oe_product_cart .oe_product_image img{
+                height: 90% !important;
+                width: 100% !important;
+            }
+            @media only screen and (max-width: 990px){
+                .branch-style{
+                    font-size: 10px !important;
+                    padding: 5px !important;
+                }
+            }
+            @media only screen and (max-width: 764px){
+                .branch-style{
+                    top: 5rem !important;
+                }
+            }
+            </style>
+
+            <a t-if="product.is_available_booking" href="#" class="active branch-style">
+              <i class="fa fa-calendar"></i>
+              <span class="links_name search-branch">Book Now</span>
+            </a>
+        </xpath>
+    </template>
+
+    <record id="inherit_view_order_form" model="ir.ui.view">
+      <field name="name">sale.order.inherit</field>
+      <field name="model">sale.order</field>
+      <field name="inherit_id" ref="sale.view_order_form"/>
+      <field name="arch" type="xml">
+        <xpath expr="/form/sheet/notebook/page/field[@name='order_line']/tree/field[@name='name']" position="after">
+            <field name="booking_time_slot"/>
+            <field name="booking_plan"/>
+            <field name="booking_date"/>
+        </xpath>
+      </field>
+    </record>
+
+    <record id="inherit_action_orders" model="ir.actions.act_window">
+        <field name="name">Booking Orders</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">sale.order</field>
+        <field name="view_mode">tree,kanban,form,calendar,pivot,graph,activity</field>
+        <field name="view_id" ref="sale.view_sale_order_kanban"/>
+        <field name="search_view_id" ref="sale.sale_order_view_search_inherit_sale"/>
+        <field name="context">{}</field>
+        <field name="domain">[('state', 'in', ('draft', 'sent', 'cancel', 'sale', 'done'))]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create a new quotation, the first step of a new sale!
+            </p><p>
+                Once the quotation is confirmed, it becomes a sales order.<br/> You will be able to create an invoice and collect the payment.
+            </p>
+        </field>
+    </record>
+
+    <record id="sale.view_order_line_tree" model="ir.ui.view">
+        <field name="name">sale.order.line.tree</field>
+        <field name="model">sale.order.line</field>
+        <field name="arch" type="xml">
+            <tree string="Sales Order Lines" create="false">
+                <field name="user_id" invisible="1"/>
+                <field name="order_id"/>
+                <field name="order_partner_id"/>
+                <field name="name" string="Product"/>
+                <field name="booking_time_slot"/>
+                <field name="booking_plan"/>
+                <field name="booking_date"/>
+                <field name="salesman_id" invisible="1"/>
+                <field name="product_uom_qty" string="Qty"/>
+                <field name="qty_delivered" invisible="1"/>
+                <field name="qty_invoiced" invisible="1"/>
+                <field name="qty_to_invoice" invisible="1"/>
+                <field name="product_uom" string="Unit of Measure" groups="uom.group_uom" invisible="1"/>
+                <field name="price_subtotal" sum="Total" widget="monetary"/>
+                <field name="currency_id" invisible="1"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="sale.sale_order_line_view_form_readonly" model="ir.ui.view">
+            <field name="name">sale.order.line.form.readonly</field>
+            <field name="model">sale.order.line</field>
+            <field name="arch" type="xml">
+                <form string="Sales Order Item">
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="display_name" readonly="1"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="user_id" invisible="1"/>
+                                <field name="order_id" readonly="1"/>
+                                <field name="product_id" readonly="1"/>
+                                <field name="booking_time_slot"/>
+                                <field name="booking_plan"/>
+                                <field name="booking_date"/>
+                                <field name="order_state"/>
+                                <field name="name" readonly="1"/>
+                                <field name="qty_invoiced" invisible="1"/>
+                                <field name="product_uom" readonly="1" invisible="1"/>
+                                <field name="company_id" options="{'no_create': True}" groups="base.group_multi_company"/>
+                                <field name="order_partner_id" invisible="1"/>
+                                <field name="display_type" invisible="1"/>
+                                <field name="product_updatable" invisible="1"/>
+                            </group>
+                            <group>
+                                <field name="order_partner_id"/>
+                                <field name="price_unit" readonly="1"/>
+                                <field name="temp_unit_price" invisible="1" readonly="1"/>
+                                <field name="product_uom_qty" readonly="1"/>
+                                <field name="qty_delivered" readonly="1" invisible="1"/>
+                                <field name="discount" groups="product.group_discount_per_so_line" readonly="1" invisible="1"/>
+                                <field name="price_subtotal" widget="monetary"/>
+                                <field name="tax_id" widget="many2many_tags" readonly="1" invisible="1"/>
+                                <field name="price_tax" widget="monetary" invisible="1"/>
+                                <field name="price_total" widget="monetary" invisible="1"/>
+                                <field name="currency_id" invisible="1"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+    <record id="inherit_action_orders_lines" model="ir.actions.act_window">
+        <field name="name">Booking Orders Lines</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">sale.order.line</field>
+        <field name="view_mode">tree,kanban,form</field>
+        <field name="view_id" ref="sale.view_order_line_tree"/>
+        <!-- <field name="domain">[('product_id.is_available_booking', '=', True)]</field> -->
+        <field name="search_view_id" ref="sale.view_sales_order_line_filter"/>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create a new quotation, the first step of a new sale!
+            </p><p>
+                Once the quotation is confirmed, it becomes a sales order.<br/> You will be able to create an invoice and collect the payment.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu -->
+    <menuitem name="Booking &amp; Reservation" 
+              id="booking_list"
+              action="inherit_action_orders"/>
+                     
+    <menuitem name="Orders" 
+              id="booking_orders_menu_root_list"
+              parent="booking_list"
+              sequence="2"/>
+
+    <menuitem name="Orders" 
+              id="booking_orders_submenu_list"
+              parent="booking_orders_menu_root_list"
+              action="inherit_action_orders"
+              sequence="1"/>
+
+    <menuitem name="Orders Lines" 
+              id="booking_orders_lines_submenu_list"
+              parent="booking_orders_menu_root_list"
+              action="inherit_action_orders_lines"
+              sequence="2"/>
+  </data> 
+</odoo>

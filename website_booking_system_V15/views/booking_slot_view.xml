@@ -1,0 +1,56 @@
+<odoo>
+  <data>
+
+    <!-- list view -->
+    <record model="ir.ui.view" id="booking_slot_list">
+      <field name="name">Booking Slot Tree View</field>
+      <field name="model">booking.slot</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="time_slot_id"/>
+          <field name="plan_id"/>
+          <field name="quantity"/>
+          <field name="price"/>
+          <field name="template_product_id" invisible="1"/>
+          <field name="booking_configure_id" invisible="1"/>
+        </tree>
+      </field>
+    </record>
+
+    <!-- form view -->
+    <record model="ir.ui.view" id="booking_slot_form">
+      <field name="name">Booking Slot Form View</field>
+      <field name="model">booking.slot</field>
+      <field name="arch" type="xml">
+        <form duplicate="false">
+          <sheet>
+            <group>
+              <group>
+                <field name="time_slot_id"/>
+                <field name="plan_id"/>
+                <field name="quantity"/>
+                <field name="price"/>
+                <field name="template_product_id" invisible="1"/>
+                <field name="booking_configure_id" invisible="1"/>
+              </group>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+     <!-- action--> 
+    <record model="ir.actions.act_window" id="booking_slot_action_window">
+      <field name="name">Booking Slot</field>
+      <field name="res_model">booking.slot</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Menu -->
+    <menuitem name="Booking Slot" 
+              id="booking_slot_submenu_list"
+              parent="booking_configuration_menu_root_list"
+              action="booking_slot_action_window"
+              sequence="4"/>
+  </data>
+</odoo>
